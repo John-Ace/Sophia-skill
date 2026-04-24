@@ -1,6 +1,6 @@
 ---
 name: sophia-image-clarifier
-description: Use when the user wants to create an image but the request is vague, under-specified, emotionally worded, reference-led, or hard to describe clearly. This skill first judges how complete the image request already is, then either generates directly, asks a few high-impact clarification questions, or guides a deeper direction-setting flow before generation. Also use when the user seems unsure, asks the assistant to choose, says they do not know how to describe the image, or would benefit from guided visual decision-making before generation. Best for posters, covers, promo visuals, product images, app showcases, portraits, scene images, brand visuals, and social media graphics.
+description: Use as the default entry point for image creation requests such as images, posters, covers, promo visuals, product images, banners, app showcases, portraits, scene images, brand visuals, and social media graphics. This skill first judges how complete the image request already is, then either generates directly, asks a few high-impact clarification questions, or guides a deeper direction-setting flow before generation. Also use when the request is vague, under-specified, emotionally worded, reference-led, or hard to describe clearly, or when the user seems unsure, asks the assistant to choose, or says they do not know how to describe the image.
 license: MIT
 metadata:
   author: John-Ace
@@ -25,6 +25,19 @@ Use for image creation tasks such as posters, covers, product visuals, portraits
 Do not use for video generation, PPT generation, coding, writing-only requests, document editing, spreadsheets, or unrelated general strategy tasks.
 
 ## Early detection and takeover
+
+Use this skill as the first routing layer for image creation requests.
+
+If the user is asking to create an image, poster, cover, product visual, banner, hero image, campaign visual, app showcase, portrait, scene image, brand visual, social graphic, or similar image asset, route the request through Sophia first.
+
+Then use the clarity-tier system to decide whether to:
+
+- generate directly
+- ask one critical clarification
+- ask a few short high-impact questions
+- guide a deeper direction-setting flow
+
+Do not require the user to explicitly admit uncertainty before activating Sophia.
 
 Use this skill proactively when the user wants an image but has not provided a strong generation-ready brief.
 
@@ -56,6 +69,23 @@ Recommended meaning:
 
 Use the clarity tier to decide how much guidance the user actually needs.
 
+## Tier enforcement rules
+
+These rules are mandatory. Do not bypass them through silent defaulting.
+
+- Ready to generate: may generate directly, or ask at most one critical clarification before generation
+- Needs quick completion: must include at least one real clarification exchange with the user before generation
+- Needs several key decisions: must include at least two real clarification exchanges with the user before generation
+- Needs direction-setting first: must begin with guided clarification and may not jump straight to generation through assistant-only concept locking
+
+Additional hard rules:
+
+- only `Ready to generate` may skip clarification entirely
+- `Needs quick completion` may not go from first response straight to generation without at least one user reply
+- `Needs several key decisions` may not resolve all major direction choices through defaults alone
+- `Needs direction-setting first` may not start by fully locking the concept on the user's behalf and then generating immediately
+- guided defaults may fill secondary decisions, but they may not replace the required user clarification exchanges for tiers 2 to 4
+
 ## User-facing tier explanation
 
 When useful, briefly tell the user what tier their request falls into and what happens next.
@@ -73,6 +103,7 @@ Do not present the tier as a score. Present it as a useful explanation of the ne
 
 Use this skill when:
 
+- the user wants to create any new image asset
 - the user has a vague image idea, mood, or direction
 - the user wants an image but cannot describe it clearly
 - the user wants help making visual decisions before generation
@@ -90,6 +121,12 @@ Before asking questions, route the request into one dominant image mode:
 5. Reference-led image
 
 If the request overlaps multiple modes, choose the single dominant mode first.
+
+Important:
+
+- all image creation requests should pass through this routing step first
+- routing through Sophia does not mean full clarification is always required
+- whether to generate directly or ask questions is decided by the clarity tier, not by whether Sophia was triggered
 
 ## Core workflow
 
@@ -143,6 +180,13 @@ Important dynamic rule:
 - if the user becomes clearer during the conversation, shorten the remaining process
 - do not mechanically use the full upper bound just because the request started vague
 
+Minimum enforcement by tier:
+
+- Ready to generate: 0 to 1 real clarification exchange
+- Needs quick completion: minimum 1 real clarification exchange
+- Needs several key decisions: minimum 2 real clarification exchanges
+- Needs direction-setting first: start with real clarification; do not generate before at least 2 real clarification exchanges unless the user explicitly tells the assistant to decide everything
+
 ## Default assumption policy
 
 If the user is unsure, choose strong defaults instead of asking more questions.
@@ -164,6 +208,8 @@ Mode defaults:
 - Reference-led image: borrow only the approved layer and keep everything else original to the new brief
 
 The more uncertain the user is, the more the skill should rely on strong guided defaults instead of repeated questioning.
+
+But strong defaults do not cancel the tier enforcement rules. For tiers 2 to 4, the assistant must still obtain the required user clarification exchanges before generation unless the user explicitly asks the assistant to fully decide on their behalf.
 
 ## Interaction style
 

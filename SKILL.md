@@ -1,6 +1,6 @@
 ---
 name: sophia-image-clarifier
-description: Use when the user wants to create an image but the request is vague, under-specified, emotionally worded, reference-led, or hard to describe clearly. Also use when the user seems unsure, asks the assistant to choose, says they do not know how to describe the image, or would benefit from guided visual decision-making before generation. Best for posters, covers, promo visuals, product images, app showcases, portraits, scene images, brand visuals, and social media graphics.
+description: Use when the user wants to create an image but the request is vague, under-specified, emotionally worded, reference-led, or hard to describe clearly. This skill first judges how complete the image request already is, then either generates directly, asks a few high-impact clarification questions, or guides a deeper direction-setting flow before generation. Also use when the user seems unsure, asks the assistant to choose, says they do not know how to describe the image, or would benefit from guided visual decision-making before generation. Best for posters, covers, promo visuals, product images, app showcases, portraits, scene images, brand visuals, and social media graphics.
 license: MIT
 metadata:
   author: John-Ace
@@ -37,6 +37,37 @@ Common early signals:
 - the user asks for something polished, advanced, brand-like, or good-looking without enough visible structure
 
 In these situations, do not wait for a full prompt. Activate the skill and guide the user into a lower-decision workflow.
+
+## Clarity tiers
+
+Before deciding how much to ask, classify the request into one of these 4 tiers:
+
+1. Ready to generate
+2. Needs quick completion
+3. Needs several key decisions
+4. Needs direction-setting first
+
+Recommended meaning:
+
+- Ready to generate: the request is already strong enough to generate directly, or needs at most one critical clarification
+- Needs quick completion: the request is mostly clear but still misses 1 to 2 high-impact variables
+- Needs several key decisions: the request has a usable direction but lacks a cluster of important image decisions
+- Needs direction-setting first: the request is highly vague, emotionally worded, reference-ambiguous, or clearly depends on the assistant to shape the direction
+
+Use the clarity tier to decide how much guidance the user actually needs.
+
+## User-facing tier explanation
+
+When useful, briefly tell the user what tier their request falls into and what happens next.
+
+Preferred style:
+
+- ready to generate -> "Your direction is already quite clear, so I only need to confirm one key point before generating."
+- needs quick completion -> "Your direction is fairly clear. I just need to quickly fill a couple of missing decisions."
+- needs several key decisions -> "You already have a usable direction, but a few important image decisions are still missing. I will help you lock them quickly."
+- needs direction-setting first -> "Your idea is still broad, so I will help you set the direction first and then turn it into a strong image brief."
+
+Do not present the tier as a score. Present it as a useful explanation of the next step.
 
 ## When to use this skill
 
@@ -94,14 +125,23 @@ Stop asking once the completion gate is satisfied unless one missing detail woul
 
 ## Clarification depth
 
-Use clarification depth based on task stakes:
+Use clarification depth based on both task stakes and clarity tier:
 
-- Fast mode: 2 to 4 meaningful rounds for casual, exploratory, or lower-stakes requests
-- Director mode: 4 to 8 meaningful rounds for brand visuals, product posters, campaign work, reference-sensitive work, or other precision-critical requests
+- Ready to generate: 0 to 1 critical clarification
+- Needs quick completion: 2 to 3 short rounds
+- Needs several key decisions: 3 to 5 rounds
+- Needs direction-setting first: up to 6 to 8 rounds when the user is engaging with the refinement
 
 Default to Fast mode unless the request clearly needs Director mode.
 
 If the skill was triggered proactively from a vague request, start in Fast mode unless the task is clearly high-stakes, commercial, reference-sensitive, or precision-critical.
+
+Important dynamic rule:
+
+- higher vagueness does not automatically mean more questions
+- if the user stays uncertain, reduce questioning and increase guided defaults
+- if the user becomes clearer during the conversation, shorten the remaining process
+- do not mechanically use the full upper bound just because the request started vague
 
 ## Default assumption policy
 
@@ -122,6 +162,8 @@ Mode defaults:
 - Social cover: one-second readability, bold focal area, reduced edge clutter
 - Portrait or character: expression readable first, styling second, background supportive
 - Reference-led image: borrow only the approved layer and keep everything else original to the new brief
+
+The more uncertain the user is, the more the skill should rely on strong guided defaults instead of repeated questioning.
 
 ## Interaction style
 
@@ -278,5 +320,6 @@ For supporting material, use:
 - `references/quality-bar.md`
 - `references/examples.md`
 - `references/testing-checklist.md`
+
 
 

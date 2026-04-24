@@ -1,10 +1,10 @@
 ---
 name: sophia-image-clarifier
-description: Use as the default entry point for image creation requests such as images, posters, covers, promo visuals, product images, banners, app showcases, portraits, scene images, brand visuals, and social media graphics. First judge how complete the request already is, then either generate directly, ask a few high-impact questions, or guide a deeper direction-setting flow before generation. Also use when the request is vague, under-specified, reference-led, or when the user wants help deciding.
+description: Use as the default entry point for image creation requests such as images, posters, covers, promo visuals, product images, banners, app showcases, portraits, scene images, brand visuals, and social media graphics. First classify how complete the request already is, then either generate directly or run a staged professional clarification workflow before generation. Also use when the request is vague, under-specified, reference-led, or when the user wants help deciding.
 license: MIT
 metadata:
   author: John-Ace
-  version: "1.1.0"
+  version: "1.2.0"
   compatibility: "Designed for Agent Skills-compatible assistants, including Claude Code, Cursor, Codex, OpenClaw, Hermes, and similar agents."
 ---
 
@@ -12,26 +12,29 @@ metadata:
 
 ## Purpose
 
-Use this skill for image creation requests. Sophia is the first-pass router for image generation, not just a fallback for vague prompts.
+Sophia is a staged professional image consultation workflow.
 
-Goal:
+Its job is to:
 
-- reduce user decision cost
-- gather enough professional decision coverage before generation
-- show the final brief and final prompt before generating
+- route all image-creation requests through one decision system
+- decide whether the request is already complete enough to generate
+- if not, collect enough professionally meaningful decisions before generation
+- output one final visual brief
+- output one final prompt
+- generate only after the final prompt is shown
 
 ## Scope
 
-Use for:
+Use for new image creation requests such as:
 
 - posters
 - covers
 - product visuals
-- brand visuals
 - social graphics
 - portraits
 - scenes
 - app showcases
+- brand visuals
 - reference-led image creation
 
 Do not use for:
@@ -39,7 +42,7 @@ Do not use for:
 - video
 - PPT
 - coding
-- writing-only tasks
+- writing-only requests
 - spreadsheets
 - unrelated strategy tasks
 
@@ -47,14 +50,12 @@ Do not use for:
 
 If the user is asking to create a new image asset, route the request through Sophia first.
 
-Then use the clarity tier to decide whether to:
+Then choose one of two paths:
 
-- generate directly
-- ask one critical clarification
-- ask a few high-impact questions
-- guide a deeper consultation flow
+1. Direct generation path
+2. Professional clarification path
 
-Do not require the user to explicitly admit uncertainty before activating Sophia.
+Do not require the user to explicitly say they are uncertain before activating Sophia.
 
 ## Clarity tiers
 
@@ -68,27 +69,18 @@ Classify the request into one tier:
 Definitions:
 
 - Ready to generate: already strong enough to generate directly, or missing at most one critical angle
-- Needs quick completion: mostly clear, but missing 1 to 2 high-impact angles
-- Needs several key decisions: has a direction, but still lacks a cluster of important decisions
+- Needs quick completion: mostly clear, but still missing 1 to 2 important angles
+- Needs several key decisions: has a usable direction, but still lacks a cluster of important decisions
 - Needs direction-setting first: broad, vague, exploratory, reference-ambiguous, or clearly dependent on assistant guidance
 
 Strong classification rule:
 
 - if the user explicitly says they are not sure, do not know how to do it, do not know how to describe it, or want help figuring it out, default to `Needs direction-setting first` unless the rest of the request is already unusually specific
-- do not downgrade that signal too early just because the user answered one style question
-
-## Tier enforcement
-
-- Ready to generate: may generate directly, or ask at most one critical clarification
-- Needs quick completion: requires at least one real user clarification reply before generation
-- Needs several key decisions: requires at least two real user clarification replies before generation
-- Needs direction-setting first: must begin with guided clarification and may not jump straight to generation through assistant-only concept locking
-
-Only `Ready to generate` may skip clarification entirely.
+- do not downgrade that signal too early
 
 ## Task routing
 
-Route into one dominant mode:
+Route the request into one dominant mode:
 
 1. Product image
 2. Poster or campaign visual
@@ -98,28 +90,72 @@ Route into one dominant mode:
 
 If multiple modes apply, choose the dominant one first.
 
-## Completion gate
+## Workflow phases
 
-Do not move to final brief until these are explicit or confidently defaulted:
+The workflow has 6 strict phases:
 
-- subject
-- visual form
-- composition
-- color or lighting
+1. Classification
+2. Clarification loop
+3. Coverage audit
+4. Final visual brief
+5. Final prompt
+6. Generation
 
-Mode-specific must-haves:
+Do not skip forward unless the current phase is complete.
 
-- Product image: material finish and background style
-- Poster or campaign visual: composition emphasis and drama level
-- Social cover: focal point, readability area, and crop safety
-- Portrait or character: subject presentation and expression or attitude
-- Reference-led image: borrowed layer and non-borrowed layer
+## Phase 1: Classification
 
-## Decision coverage rule
+In this phase:
 
-Do not judge completion by turn count alone. Judge it by whether enough high-impact decision angles are locked.
+- identify the dominant image mode
+- identify the clarity tier
+- decide whether the request qualifies for direct generation or must enter the clarification loop
 
-High-impact angles may include:
+Direct generation is allowed only for `Ready to generate`.
+
+All other tiers must enter the clarification loop.
+
+## Phase 2: Clarification loop
+
+This phase is mandatory for tiers 2 to 4.
+
+Clarification loop rules:
+
+- ask one primary question per turn by default
+- each turn should collect one meaningful decision, not several unrelated ones
+- use plain language
+- provide options whenever possible
+- default to 4 options for most important questions
+- allow 3 options when the decision space is naturally tight
+- allow up to 5 options when the extra spread improves the choice
+- do not repeatedly use only 3 options unless the choice space is genuinely that tight
+- do not bundle subject, ratio, mood, and scene into one message
+
+Absolute restriction:
+
+- during the clarification loop, do not output a draft brief
+- during the clarification loop, do not output a scene-setting paragraph
+- during the clarification loop, do not output a recommended final concept paragraph
+- during the clarification loop, do not output a generation-ready prompt
+- during the clarification loop, do not jump to "选这个的话建议做成这种" style content
+
+Allowed clarification-loop output:
+
+1. one short state sentence
+2. one primary question
+3. 3 to 5 options
+
+Nothing else should appear in user-facing output during this phase.
+
+## Phase 3: Coverage audit
+
+Before moving to final brief, audit whether enough professional decisions have been locked.
+
+Do not judge readiness by turn count alone.
+
+Judge readiness by decision coverage.
+
+High-impact decision angles may include:
 
 - use case
 - aspect ratio or delivery format
@@ -136,32 +172,24 @@ High-impact angles may include:
 - supporting elements
 - reference borrowing boundary
 
-The exact angles are not fixed for every image. Lock the angles that matter most for the request.
+The exact angles are not fixed for every request. Lock the angles that matter most for the image type.
 
-Hard rules:
+Coverage minimums:
 
-- one style choice is never enough for a highly vague request
-- one subject choice is never enough for professional completion
-- two narrow aesthetic choices in sequence are not enough for a broad creative request
-
-Minimum coverage by tier:
-
-- Ready to generate: enough existing coverage already, or one critical missing angle at most
+- Ready to generate: already sufficient, or missing at most one critical angle
 - Needs quick completion: at least 2 high-impact angles locked
 - Needs several key decisions: at least 3 high-impact angles locked
 - Needs direction-setting first: at least 4 high-impact angles locked
 
-If the user explicitly expressed uncertainty at the start, do not finalize after only narrow aesthetic picks. Coverage must extend beyond style alone.
+Professional consultation rule:
 
-## Professional consultation mode
-
-If the request is both open-ended and clearly dependent on the assistant's guidance, treat it as professional consultation.
+For open-ended or explicitly uncertain requests, treat the run as professional consultation.
 
 In professional consultation mode:
 
+- prioritize primary categories before secondary ones
 - do not optimize for ending early
-- optimize for enough decision quality before generation
-- prioritize primary categories first
+- do not finalize on the basis of one style choice, one subject choice, or two narrow aesthetic picks
 
 Primary decision categories:
 
@@ -184,77 +212,83 @@ Secondary decision categories:
 5. Detail density and atmosphere finishing
 6. Avoid directions
 
-Professional coverage rule:
+Professional coverage requirement:
 
 - normally lock at least 4 relevant primary categories
 - also lock at least 1 relevant secondary category when it materially affects the result
-- do not let style-only questions substitute for structural decision categories
 
-## User override rule
+If coverage audit fails, return to the clarification loop. Do not move to final brief.
 
-If the user explicitly says things like:
+## Phase 4: Final visual brief
+
+Only after the coverage audit passes, output one final visual brief.
+
+The final visual brief should:
+
+- summarize the locked decisions clearly
+- be concise
+- reflect the actual clarified decisions
+- not introduce new major ideas
+
+The final visual brief appears once.
+
+## Phase 5: Final prompt
+
+Only after the final visual brief, output one final high-quality prompt.
+
+Prompt rules:
+
+- the prompt must be based on the clarified decisions
+- the prompt must follow the final visual brief
+- the prompt must not introduce a new subject, setting, prop, or style axis
+- the prompt should default to the user's language
+- do not default to English for non-English users unless explicitly requested
+
+The final prompt appears once.
+
+## Phase 6: Generation
+
+Generation happens only after:
+
+1. coverage audit passed
+2. final visual brief was shown
+3. final prompt was shown
+
+Generation rules:
+
+- generate from the exact shown final prompt
+- do not generate from a hidden rewritten variant
+- if the prompt changes, show the adjusted final prompt first
+
+## Tier enforcement
+
+- Ready to generate: may generate directly, or ask at most one critical clarification
+- Needs quick completion: requires at least one real user clarification reply before generation
+- Needs several key decisions: requires at least two real user clarification replies before generation
+- Needs direction-setting first: requires guided clarification and may not jump straight to generation through assistant-only concept locking
+
+Only `Ready to generate` may skip the clarification loop entirely.
+
+## Default assumption policy
+
+Defaults may help fill secondary decisions, but they do not cancel:
+
+- tier enforcement
+- clarification loop requirements
+- coverage audit requirements
+
+If the user explicitly says:
 
 - the rest you decide
 - you can fill in the rest
 - forget it, just generate
 - you handle the remaining details
 
-then the assistant may complete remaining secondary decisions through guided defaults.
+then the assistant may fill remaining secondary decisions through guided defaults.
 
-Without an explicit override, do not auto-complete too many missing high-impact variables.
+Without an explicit override, do not auto-complete too many missing high-impact decisions.
 
-## Clarification depth
-
-Use both clarity tier and task stakes:
-
-- Ready to generate: 0 to 1 critical clarification
-- Needs quick completion: 2 to 3 short rounds
-- Needs several key decisions: 3 to 5 rounds
-- Needs direction-setting first: up to 6 to 8 rounds when the user is engaging with refinement
-
-Dynamic rule:
-
-- more vagueness does not automatically mean more questions
-- if the user stays uncertain, ask less and decide more
-- if the user becomes clear quickly, shorten the process
-- Fast mode lowers round count, but does not erase tier enforcement or decision coverage requirements
-
-## Default assumption policy
-
-If the user is unsure, use strong guided defaults for secondary decisions.
-
-Default tendencies:
-
-- clear subject focus
-- restrained palette unless bold color is clearly wanted
-- lighting that reveals form and material
-- clean background unless the environment is essential
-
-But defaults do not cancel:
-
-- tier enforcement
-- decision coverage requirements
-- user clarification minimums
-
-## Interaction rules
-
-Use plain language. Avoid design-school jargon unless the user clearly understands it.
-
-Question rules:
-
-- ask one primary question per turn by default
-- each turn should help the user make one small decision
-- do not bundle unrelated decision dimensions into one message
-- only compress multiple decisions when the user explicitly wants a faster condensed flow or the variables are tightly coupled
-
-Option rules:
-
-- default to 4 options for most important questions
-- allow 3 options when the decision space is naturally tight
-- allow up to 5 options when the extra spread improves choice quality
-- do not repeatedly fall back to only 3 options unless the topic truly only supports 3 meaningful paths
-
-## Mode question paths
+## Question priorities by mode
 
 - Product image: hero object -> finish -> viewing angle -> background style -> aspect ratio if needed
 - Poster or campaign visual: dominant subject -> drama level -> composition structure -> title or breathing space -> palette and lighting
@@ -281,72 +315,6 @@ For reference-led requests, always clarify:
 - what should be borrowed
 - what should not be borrowed
 
-Common borrowable layers:
-
-- feeling
-- composition
-- color palette
-- lighting
-- pose
-- material
-- typography or title placement
-- spacing and density
-
-## Output behavior
-
-If generation is available:
-
-1. show the final visual brief
-2. show the final prompt
-3. generate from that exact prompt
-
-If generation is unavailable:
-
-1. show the final visual brief
-2. show the final prompt only
-
-Hard requirements:
-
-- finalize the prompt before generation
-- generate from the shown prompt, not from a hidden rewritten variant
-- if the prompt changes, show the adjusted final prompt first
-
-## Prompt language rule
-
-Default the final visual brief and final prompt to the user's language.
-
-Do not default to English for users clearly working in another language unless they explicitly ask for English or a specific workflow requires it.
-
-## Final prompt format
-
-Write the final prompt in this order:
-
-1. image type and use case
-2. main subject
-3. composition and framing
-4. color and lighting
-5. material, texture, and environment treatment
-6. translated mood or style decisions
-7. concise avoid directions
-
-## Anti-drift rule
-
-After clarification, the final prompt must stay tightly coupled to the brief.
-
-Allowed:
-
-- strengthen an approved direction
-- make chosen composition or lighting more precise
-- add minor supporting detail that does not change the concept
-
-Not allowed:
-
-- new subject
-- new setting or environment axis
-- extra props that change the concept
-- style drift into a new lane
-- busier output just because the model rewards detail
-
 ## Conflict resolution
 
 When qualities conflict, resolve them in this order:
@@ -357,9 +325,9 @@ When qualities conflict, resolve them in this order:
 4. Color and lighting coherence
 5. Mood or style adjectives
 
-## Model adaptation
+## Model fallback
 
-If the target model is unknown, use a portable fallback:
+If the target model is unknown, use a portable prompt shape:
 
 - 120 to 220 words
 - intent -> subject -> composition -> color and lighting -> material or background -> avoid
@@ -386,6 +354,7 @@ Use supporting material from:
 - `references/quality-bar.md`
 - `references/examples.md`
 - `references/testing-checklist.md`
+
 
 
 

@@ -281,7 +281,7 @@ If image generation is available:
 
 1. show the final visual brief
 2. show the final prompt
-3. generate the image from that prompt
+3. generate the image from that exact prompt
 
 If image generation is unavailable:
 
@@ -290,6 +290,12 @@ If image generation is unavailable:
 
 Do not keep the final prompt hidden by default.
 
+Hard requirement:
+
+- always finalize the prompt before image generation
+- always generate from the finalized prompt, not from a hidden rewritten variant
+- if the prompt is adjusted, show the adjusted final prompt first, then generate from it
+
 ## Final output structure
 
 Preferred user-visible structure:
@@ -297,6 +303,20 @@ Preferred user-visible structure:
 1. Final visual brief: 3 to 6 short lines in plain language
 2. Final prompt: one polished generation-ready prompt
 3. Optional avoid block: only when the model benefits from it
+
+## Prompt language rule
+
+The final visual brief and final prompt should default to the user's language.
+
+Examples:
+
+- if the user is writing in Chinese, show the brief and prompt in Chinese
+- if the user is writing in English, show the brief and prompt in English
+- if the user is writing in another language, default to that language when feasible
+
+Only switch languages if the user explicitly asks for a different prompt language or if a specific model workflow clearly requires it.
+
+Do not default to English prompts for users who are clearly working in another language.
 
 ## Final prompt format
 

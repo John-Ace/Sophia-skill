@@ -1,91 +1,60 @@
 # Examples
 
-This file contains examples of how Sophia Skill should behave.
+## Product image example
 
-## Example 1: Product promotional image
+Final visual brief:
 
-### User input
+- Product launch visual for one pair of earbuds
+- One hero product, large in frame
+- Brushed-metal finish with controlled reflections
+- Soft gradient background, no props
+- Clean commercial composition and restrained palette
 
-> I want to make a premium promotional image for the latest iPhone, high-end and focused on photography.
+Final prompt:
 
-### Expected behavior
+```text
+Create a product launch advertising image for one pair of wireless earbuds. Show the earbuds as the clear hero object, large in frame, with a refined brushed-metal finish and precise industrial detailing. Use a clean commercial composition with strong focal emphasis on the product, controlled studio lighting, crisp edge highlights, and realistic reflections that reveal form without looking glossy or cheap. Keep the background minimal with a soft gradient only, no extra props, no lifestyle elements, and no clutter. Make the result feel polished and launch-ready through material clarity, clean spacing, and restrained color. Avoid noisy backgrounds, oversaturated colors, warped geometry, plastic-looking surfaces, or duplicate objects.
+```
 
-Do not generate immediately.
+## Social cover example
 
-Start with a clarification question:
+Final visual brief:
 
-> Great. I’ll help turn this into a stronger image direction before generation. First, what kind of promotional image do you want?
+- Xiaohongshu cover with one obvious focal object
+- One-second readability
+- Readable title area preserved
+- Key content kept away from crop-sensitive edges
+- Higher contrast without cheap clutter
 
-Options:
+Final prompt:
 
-- A premium product poster
-- An Apple-style website hero image
-- A social media promo visual
-- A launch-event style visual
-- A close-up camera feature visual
-- I am not sure — please choose the best direction
-- Other — I will describe it
+```text
+Create a Xiaohongshu-style social cover image that reads clearly on a small mobile screen. Use one obvious focal object as the center of attention with strong visual hierarchy and immediate one-second readability. Keep the composition clean and stable, preserve a readable title area, and keep key visual elements away from crop-sensitive edges. Use a restrained palette, stronger focal contrast, and simplified surrounding detail so the cover feels polished rather than cheap. Keep the background supportive and quiet, with reduced edge clutter and no unnecessary decorative noise. Avoid tiny details, messy borders, overfilled layout, weak focal contrast, or visual clutter that would hurt thumbnail readability.
+```
 
-Continue through the clarification flow.
+## Reference-led example
 
-### Example final instruction
+Final visual brief:
 
-> Create a vertical premium product poster for the latest iPhone, with the rear camera system as the main visual focus. The phone should be shown in a clean, high-end studio composition, slightly angled to reveal the camera module, glass back, and metal frame. Use a restrained Apple-style product campaign look with generous negative space, precise layout, and a clean title area. The color palette should be deep graphite, silver, soft white highlights, and subtle cool gray gradients. Lighting should feel controlled and cinematic, with soft edge light, refined reflections, and minimal lens flare. Add subtle photography-related visual elements, such as a floating low-light city sample panel, delicate light trails, or abstract bokeh fragments, to communicate advanced imaging capability without clutter. The overall mood should be premium, elegant, precise, and technologically refined. Avoid cheap neon, cyberpunk overload, messy UI, exaggerated glow, low-quality camera graphics, and over-saturated colors.
+- Luxury perfume bottle as the new hero subject
+- Borrow only the source color palette
+- Keep subject and composition clearly different
+- Minimal commercial composition
+- Clean background and strong borrowing boundary
 
-## Example 2: App showcase image
+Final prompt:
 
-### User input
+```text
+Create a luxury perfume advertising image centered on one perfume bottle as the clear hero subject. Borrow only the color palette relationship from the reference image, keeping the new subject, composition, and overall scene structure clearly different. Use a minimal commercial composition with generous negative space, precise lighting, and polished material detail so the bottle feels refined and deliberate. Let the reference influence the palette only through visible color balance and tonal relationship, not through copied layout, copied props, or subject similarity. Keep the background clean and supportive. Avoid reproducing the reference subject, imitating its composition, or adding extra styling elements that make the image feel derivative instead of original.
+```
 
-> I want to make a warm premium image for an AI mental wellness app, but I do not know how to describe it.
+## Golden dialogue patterns
 
-### Expected final direction
+Strong dialogue patterns usually:
 
-The final instruction should specify:
+- identify the correct mode early
+- ask only high-impact questions
+- default more strongly after repeated user uncertainty
+- present a short readable brief before the final prompt
+- keep the final prompt loyal to the brief
 
-- vertical brand poster or app store style visual
-- phone mockup as the main subject
-- floating translucent feature cards
-- warm off-white, soft peach, mist pink, gentle gray-green palette
-- soft morning light
-- clean spacing and clear hierarchy
-- glassmorphism and refined product rendering
-- avoid cheap UI, cyberpunk, clutter, and over-saturated colors
-
-## Example 3: Portrait mood image
-
-### User input
-
-> I want a cinematic portrait, quiet and a little tired, but not influencer-like.
-
-### Expected final direction
-
-The final instruction should specify:
-
-- vertical emotional portrait
-- realistic or film-still style
-- half-body or environmental portrait
-- subject placement and expression
-- soft side light or evening window light
-- low-saturation warm gray / mist blue palette
-- real skin texture and subtle film grain
-- avoid over-retouching, influencer style, exaggerated filters, and cluttered background
-
-## Example 4: Reference image case
-
-### User input
-
-> I want to use this reference image’s composition, but make it a phone product ad.
-
-### Expected behavior
-
-Ask what part of the composition should be kept:
-
-- subject placement
-- empty space
-- foreground/background relationship
-- text and subject arrangement
-- depth and layers
-- overall balance
-- not sure — analyze it for me
-
-Do not directly copy the original content.

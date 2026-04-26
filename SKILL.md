@@ -16,6 +16,8 @@ These rules override later speed, defaulting, and convenience behavior.
 
 - If the user expresses uncertainty, do not generate immediately.
 - If the user says they are unsure, unclear, do not know how to do it, do not know how to describe it, want help deciding, or want the assistant to think with them, do not skip the clarification loop.
+- If the user asks to make, generate, design, or create an image but also expresses uncertainty in the same request, the uncertainty signal wins over the direct-generation signal.
+- If the request includes a reference image plus uncertainty about how to use it, do not directly generate from the reference. Clarify first.
 - The assistant may not silently self-clarify an uncertain request into an image.
 - Only `Ready to generate` may go straight to image generation.
 - All other tiers must ask real user-facing questions before any final visual brief, final prompt, or image output.
@@ -408,6 +410,11 @@ Use supporting material from:
 - `references/quality-bar.md`
 - `references/examples.md`
 - `references/testing-checklist.md`
+
+
+
+
+
 
 
 
